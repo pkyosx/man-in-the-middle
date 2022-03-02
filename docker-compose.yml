@@ -1,0 +1,27 @@
+version: '3.1'
+
+networks:
+  internal:
+    driver: bridge
+
+services:
+  nodejs:
+    build: .
+    privileged: true
+    restart: always
+    volumes:
+      - ${PWD}/src:/app
+    networks:
+      - internal
+  nginx:
+    image: nginx
+    privileged: true
+    restart: always
+    volumes:
+      - ${PWD}/config/route.conf:/etc/nginx/conf.d/route.conf
+      - ${PWD}/config/cert.pem:/etc/httpd/conf/ssl/cert.pem
+      - ${PWD}/config/key.pem:/etc/httpd/conf/ssl/key.pem
+    ports:
+      - 443:443
+    networks:
+      - internal
